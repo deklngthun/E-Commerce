@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCart } from '../context/CartContext';
 
 function StarRating({ rating = 0, reviews = 0 }) {
@@ -21,8 +22,23 @@ function StarRating({ rating = 0, reviews = 0 }) {
 
 export default function ProductCard({ product }) {
     const { addToCart } = useCart();
-    const rating = product.rating || (3.5 + Math.random() * 1.5);
-    const reviews = product.reviews || Math.floor(100 + Math.random() * 3000);
+
+    const [rating, reviews] = React.useMemo(() => {
+        // Simple hash of the ID to get a stable pseudo-random number
+        let hash = 0;
+        const hashStr = product.id.toString();
+        for (let i = 0; i < hashStr.length; i++) {
+            hash = (hash << 5) - hash + hashStr.charCodeAt(i);
+            hash |= 0;
+        }
+        const pseudoRand1 = Math.abs(hash) % 100 / 100; // 0 to 0.99
+        const pseudoRand2 = Math.abs(hash * 31) % 100 / 100; // 0 to 0.99
+
+        return [
+            product.rating || (3.5 + pseudoRand1 * 1.5),
+            product.reviews || Math.floor(100 + pseudoRand2 * 3000)
+        ];
+    }, [product.rating, product.reviews, product.id]);
 
     return (
         <article className="product-card" id={`product-${product.id}`}>

@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import SellerDashboard from './components/SellerDashboard';
 
-function HomePage({ searchQuery, onSearch, onCategoryClick }) {
+function HomePage({ searchQuery, onCategoryClick }) {
   return (
     <>
       <Hero onCategoryClick={onCategoryClick} />
@@ -42,7 +42,6 @@ export default function App() {
             element={
               <HomePage
                 searchQuery={searchQuery}
-                onSearch={handleSearch}
                 onCategoryClick={handleCategoryClick}
               />
             }

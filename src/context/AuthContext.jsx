@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     return useContext(AuthContext);
 }
@@ -38,6 +39,7 @@ export function AuthProvider({ children }) {
         );
 
         return () => subscription.unsubscribe();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function fetchProfile(userId) {

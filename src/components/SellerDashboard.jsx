@@ -33,6 +33,7 @@ export default function SellerDashboard() {
         if (user && isSeller) {
             fetchMyProducts();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, isSeller]);
 
     async function fetchMyProducts() {
@@ -54,6 +55,27 @@ export default function SellerDashboard() {
 
     function handleChange(e) {
         setForm({ ...form, [e.target.name]: e.target.value });
+    }
+
+    function handleFileChange(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            showToast('Please select an image file (JPG, PNG, WebP, etc.)');
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit to prevent huge payloads
+            showToast('Image size exceeds 2MB limit. Please choose a smaller image.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setForm((prev) => ({ ...prev, image_url: reader.result }));
+        };
+        reader.readAsDataURL(file);
     }
 
     function handleEdit(product) {
@@ -250,15 +272,40 @@ export default function SellerDashboard() {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="prod-image">Image URL</label>
-                                    <input
-                                        id="prod-image"
-                                        name="image_url"
-                                        type="url"
-                                        value={form.image_url}
-                                        onChange={handleChange}
-                                        placeholder="https://images.unsplash.com/..."
-                                    />
+                                    <label htmlFor="prod-image">Product Image (Upload or URL)</label>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            style={{
+                                                padding: '8px',
+                                                border: '1px dashed #ccc',
+                                                borderRadius: '4px',
+                                                background: '#fafafa',
+                                                cursor: 'pointer',
+                                                fontSize: '14px'
+                                            }}
+                                        />
+                                        <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>— OR —</div>
+                                        <input
+                                            id="prod-image"
+                                            name="image_url"
+                                            type="url"
+                                            value={form.image_url?.startsWith('data:') ? '' : form.image_url}
+                                            onChange={handleChange}
+                                            placeholder="https://images.unsplash.com/..."
+                                        />
+                                    </div>
+                                    {form.image_url && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <img
+                                                src={form.image_url}
+                                                alt="Preview"
+                                                style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
