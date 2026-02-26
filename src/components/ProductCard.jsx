@@ -43,7 +43,7 @@ export default function ProductCard({ product }) {
                 <div className="product-card__footer">
                     <div className="product-card__pricing">
                         <span className="product-card__price">
-                            ${product.price.toFixed(2)}
+                            ${Number(product.price || 0).toFixed(2)}
                         </span>
                         <span className="product-card__delivery">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
